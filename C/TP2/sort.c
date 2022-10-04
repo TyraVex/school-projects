@@ -10,47 +10,81 @@ unsigned long getTime(){
 
 }
 
+
+// main function
 int main (void)
 {
 
   // variable initialisations
   int arrayLength, tries = 0, i, j, minimum, swap;
   unsigned long chrono, time;
+  char answer;
 
-  // asking the array length
+  // aking for manual or random input method
   printf("\n");
   do
   {
-    printf("Array length : ");
-    scanf("%d", &arrayLength);
+    printf("Use random array values ? : ");
+    scanf("%c", &answer);
     tries++;
   }
-  while ((arrayLength <= 0 || arrayLength > 20) && tries < 3);
+  while((answer == 'y' || answer == 'n' || answer == 'Y' || answer == 'N') && tries < 3);
 
-  // input processing
-  if (arrayLength < 1 || arrayLength > 20)
+  if (answer == 'y' || answer == 'Y')
   {
-    printf("Input failed to process\n");
-    printf("Please input an integer between 1 and 20\n\n");
-    return 1;
+
+     printf("Generating array with random values...\n\n");
+     return 1;
+
+  }
+  else if (answer == 'n' || answer == 'N')
+  {
+
+    // asking the array length
+    printf("\n");
+    tries--;
+    do
+    {
+      printf("Array length : ");
+      scanf("%d", &arrayLength);
+      tries++;
+    }
+    while ((arrayLength <= 0 || arrayLength > 20) && tries < 3);
+
+    // input processing
+    if (arrayLength < 1 || arrayLength > 20)
+    {
+      printf("Input failed to process\n");
+      printf("Please input an integer between 1 and 20\n\n");
+      return 1;
+    }
+
+    // create the array and reset tries
+    int array[arrayLength], arrayBak[arrayLength];
+    tries = 0;
+
+    // asking the array values
+    printf("\n");
+    for (i = 0; i < arrayLength; i++)
+    {
+      printf("Array value at index %d : ", i);
+      scanf("%d", &array[i]);
+      arrayBak[i] = array[i];
+      tries++;
+    }
+
+  }
+  else
+  {
+
+     printf("Wrong input. Cancelling...\n\n");
+     return 1;
+
   }
 
-  // create the array and reset tries
-  int array[arrayLength], arrayBak[arrayLength];
-  tries = 0;
-
-  // asking the array values
-  printf("\n");
-  for (i = 0; i < arrayLength; i++)
-  {
-    printf("Array value at index %d : ", i);
-    scanf("%d", &array[i]);
-    arrayBak[i] = array[i];
-    tries++;
-  }
 
   // print the array
-  printf("\nARRAY VALUES :\n\n");
+  printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
   for (i = 0; i < arrayLength; i++)
   {
     printf("array[%d]=%d\n", i, array[i]);
