@@ -25,10 +25,10 @@ int main (void)
   do
   {
     printf("Use random array values ? : ");
-    scanf("%c", &answer);
+    scanf(" %c", &answer);
     tries++;
   }
-  while((answer == 'y' || answer == 'n' || answer == 'Y' || answer == 'N') && tries < 3);
+  while((answer != 'y' && answer != 'n' && answer != 'Y' && answer != 'N') && tries < 3);
 
   if (answer == 'y' || answer == 'Y')
   {
@@ -42,7 +42,7 @@ int main (void)
 
     // asking the array length
     printf("\n");
-    tries--;
+    tries = 0;
     do
     {
       printf("Array length : ");
@@ -82,6 +82,8 @@ int main (void)
 
   }
 
+
+  int array[0], arrayBak[0];
 
   // print the array
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
