@@ -185,8 +185,8 @@ int main (void)
 {
 
   // variable initialisations
-  int arrayLength, tries, i;
-  unsigned long chrono, time;
+  unsigned long chrono, time, selectionTimes[10], bubbleTimes[10], insertionTimes[10];
+  int arrayLength, tries, i, j;
   char answer;
 
 
@@ -266,8 +266,74 @@ int main (void)
   // if option 'generate multiple random arrays' is selected
   if (answer == '3')
   {
-    arrayLength = 5000;
+
+    // initialise procedure
     printf("\e[A\e[2K\e[A\e[2K");
+    int array[32000], arrayBak[32000];
+    j = 0;
+
+    for (arrayLength = 1000; arrayLength <= 32000; arrayLength = arrayLength * 2)
+    {
+
+      // generate a random array
+      for (i = 0; i < arrayLength; i++)
+      {
+        array[i] = rand() % 10000;
+        arrayBak[i] = array[i];
+      }
+
+      // print the array
+      printf("\e[33mSIZE OF ARRAY : %d\e[0m\n\n", arrayLength);
+
+      // SELECTION SORT
+      time = selectionSort(array, arrayLength);
+      selectionTimes[j] = time;
+      printTime(time);
+
+      // restore unsorted array
+      for (i = 0; i < arrayLength; i++)
+      {
+        array[i] = arrayBak[i];
+      }
+
+      // BUBBLE SORT
+      time = bubbleSort(array, arrayLength);
+      bubbleTimes[j] = time;
+      printTime(time);
+
+      // restore unsorted array
+      for (i = 0; i < arrayLength; i++)
+      {
+        array[i] = arrayBak[i];
+      }
+
+      // restore unsorted array
+      for (i = 0; i < arrayLength; i++)
+      {
+        array[i] = arrayBak[i];
+      }
+
+      // INSERTION SORT
+      time = insertionSort(array, arrayLength);
+      insertionTimes[j] = time;
+      printTime(time);
+
+      j++;
+
+    }
+
+    // recap
+    printf("\nRECAP (in µs) : \n");
+    printf ("\nSelection sorting times  | %8lu", selectionTimes[0]);
+    for (i = 1; i < 6; i++) { printf (" | %8lu", selectionTimes[i]); }
+    printf ("\nBubble sorting times     | %8lu", bubbleTimes[0]);
+    for (i = 1; i < 6; i++) { printf (" | %8lu", bubbleTimes[i]); }
+    printf ("\nInsertion sorting times  | %8lu", insertionTimes[0]);
+    for (i = 1; i < 6; i++) { printf (" | %8lu", insertionTimes[i]); }
+
+    printf("\n\n");
+    return 0;
+
   }
 
 
@@ -292,7 +358,6 @@ int main (void)
 
   }
 
-
   // generate the random array
   if (answer == '2')
   {
@@ -305,40 +370,22 @@ int main (void)
     time = getTime() - chrono;
   }
 
-
-  // generate multiple random arrays
-  if (answer == '3')
-  {
-    chrono = getTime();
-    for (i = 0; i < arrayLength; i++)
-    {
-      array[i] = rand() % 10000;
-      arrayBak[i] = array[i];
-    }
-    time = getTime() - chrono;
-  }
-
-
   // print the array
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
   printArray(array, arrayLength);
   printTime(time);
 
-
   // SELECTION SORT
-  time = selectionSort(array, arrayLength);
-  printTime(time);
+  printTime(selectionSort(array, arrayLength));
 
   // restore unsorted array
   for (i = 0; i < arrayLength; i++)
   {
     array[i] = arrayBak[i];
   }
-
 
   // BUBBLE SORT
-  time = bubbleSort(array, arrayLength);
-  printTime(time);
+  printTime(bubbleSort(array, arrayLength));
 
   // restore unsorted array
   for (i = 0; i < arrayLength; i++)
@@ -346,10 +393,14 @@ int main (void)
     array[i] = arrayBak[i];
   }
 
+  // restore unsorted array
+  for (i = 0; i < arrayLength; i++)
+  {
+    array[i] = arrayBak[i];
+  }
 
   // INSERTION SORT
-  time = insertionSort(array, arrayLength);
-  printTime(time);
+  printTime(insertionSort(array, arrayLength));
 
   return 0;
 
