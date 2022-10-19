@@ -1,6 +1,7 @@
 # include <stdio.h>
 # include <sys/time.h>
 
+
 // get time in microseconds
 unsigned long getTime(){
 
@@ -20,7 +21,8 @@ int main (void)
   unsigned long chrono, time;
   char answer;
 
-  // aking for manual or random input method
+
+  // ask for manual or random input method
   printf("\n");
   do
   {
@@ -30,17 +32,45 @@ int main (void)
   }
   while((answer != 'y' && answer != 'n' && answer != 'Y' && answer != 'N') && tries < 3);
 
+
+  // if wrong answer
+  if (answer != 'y' && answer != 'n' && answer != 'Y' && answer != 'N')
+  {
+     printf("Wrong input. Cancelling...\n\n");
+     return 1;
+  }
+
+
+  // if random input method selected
   if (answer == 'y' || answer == 'Y')
   {
 
-     printf("Generating array with random values...\n\n");
-     return 1;
+    // ask the array length
+    printf("\n");
+    tries = 0;
+    do
+    {
+      printf("Array length : ");
+      scanf("%d", &arrayLength);
+      tries++;
+    }
+    while (arrayLength <= 0 && tries < 3);
+
+    // input processing
+    if (arrayLength <= 0)
+    {
+      printf("Please input a positive integer\n\n");
+      return 1;
+    }
 
   }
-  else if (answer == 'n' || answer == 'N')
+
+
+  // if manual input method selected
+  if (answer == 'n' || answer == 'N')
   {
 
-    // asking the array length
+    // ask the array length
     printf("\n");
     tries = 0;
     do
@@ -59,9 +89,17 @@ int main (void)
       return 1;
     }
 
-    // create the array and reset tries
-    int array[arrayLength], arrayBak[arrayLength];
-    tries = 0;
+  }
+
+
+  // create the array and reset tries
+  int array[arrayLength], arrayBak[arrayLength];
+  tries = 0;
+
+
+  // ask each value of array
+  if (answer == 'n' || answer == 'N')
+  {
 
     // asking the array values
     printf("\n");
@@ -74,16 +112,7 @@ int main (void)
     }
 
   }
-  else
-  {
 
-     printf("Wrong input. Cancelling...\n\n");
-     return 1;
-
-  }
-
-
-  int array[0], arrayBak[0];
 
   // print the array
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
@@ -92,6 +121,7 @@ int main (void)
     printf("array[%d]=%d\n", i, array[i]);
   }
   printf("\n");
+
 
   // SELECTION SORT
   chrono = getTime();
@@ -116,6 +146,7 @@ int main (void)
   }
   time = getTime() - chrono;
 
+
   // print the sorted values
   printf("\e[31mSELECTION SORT : \e[0m\n\n");
   for (i = 0; i < arrayLength; i++)
@@ -129,6 +160,7 @@ int main (void)
   {
     array[i] = arrayBak[i];
   }
+
 
   // BUBBLE SORT
   chrono = getTime();
@@ -148,6 +180,7 @@ int main (void)
   }
   time = getTime() - chrono;
 
+
   // print the sorted values
   printf("\e[31mBUBBLE SORT : \e[0m\n\n");
   for (i = 0; i < arrayLength; i++)
@@ -161,6 +194,7 @@ int main (void)
   {
     array[i] = arrayBak[i];
   }
+
 
   // INSERTION SORT
   chrono = getTime();
@@ -176,6 +210,7 @@ int main (void)
     }
   }
   time = getTime() - chrono;
+
 
   // print the sorted values
   printf("\e[31mINSERTION SORT : \e[0m\n\n");
