@@ -4,7 +4,7 @@ Hello!</br>
 This project is a showcase about simple sorting algorithms.</br>
 It has bubble, insertion and selection sort capabilities.</br>
 </br>
-To test them, a few tools are available :</br>
+To test them, a few tools are available (sort.c) :</br>
 - Populate an array manually
 - Generate an array automatically
 - Generate multiple arrays automatically
