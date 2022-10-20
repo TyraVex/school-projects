@@ -191,7 +191,7 @@ int main (void)
   int i, j, k, tries;
   int Xsteps, Ysteps, Xmax, Ymax, Xscale, Yscale, Xmove, Ymove;
   for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 100 + 1000; };
-  unsigned long chrono, time, selectionTimes[arraySizesLength-1], bubbleTimes[arraySizesLength-1], insertionTimes[arraySizesLength-1];
+  unsigned long time, selectionTimes[arraySizesLength-1], bubbleTimes[arraySizesLength-1], insertionTimes[arraySizesLength-1];
   char answer;
 
   struct winsize size;
@@ -399,19 +399,15 @@ int main (void)
   // generate the random array
   if (answer == '2')
   {
-    chrono = getTime();
     for (i = 0; i < arrayLength; i++)
     {
       array[i] = rand() % 10000;
       arrayBak[i] = array[i];
     }
-    time = getTime() - chrono;
   }
 
   // print the array
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
-  printArray(array, arrayLength);
-  printTime(time);
 
   // SELECTION SORT
   printTime(selectionSort(array, arrayLength));
