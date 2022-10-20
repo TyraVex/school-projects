@@ -2,7 +2,7 @@
 
 Hello!</br>
 This project is a showcase about simple sorting algorithms.</br>
-It has bubble sort, insertion sort and selection sort capabilities.</br>
+It has bubble, insertion and selection sort capabilities.</br>
 </br>
 To test them, a few tools are available :</br>
 </br>
