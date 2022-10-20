@@ -1,8 +1,48 @@
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>
 # include <sys/time.h>
+# include <unistd.h>
 # include <sys/ioctl.h>
+
+
+// function for asking array length
+int askArrayLength(int answer)
+{
+
+  int scanfCheck, arrayLength, tries = 0;
+  while (1)
+  {
+
+    // ask array length
+    printf("\nArray length : ");
+    scanfCheck = scanf("%d", &arrayLength);
+    tries++;
+
+    // input processing
+    if (tries != 3 && ((scanfCheck != 1 && answer == 1) || (answer == 1 && (arrayLength > 20 || arrayLength < 1))))
+    {
+      printf("\n\e[31mERROR : Please provide a value between 0 and 20\e[0m\n");
+      getchar();
+    }
+    else if (tries != 3 && (scanfCheck != 1 || arrayLength < 1))
+    {
+      printf("\n\e[31mERROR : Please provide an integer greater or equal than 0\e[0m\n");
+      getchar();
+    }
+    else if ((answer == 1 && (arrayLength <= 20 || arrayLength > 0)) || arrayLength > 0)
+    {
+      return arrayLength;
+    }
+    else if (tries == 3)
+    {
+      printf("\n\e[31mERROR : Too many invalid inputs\e[0m\n\n");
+      exit(1);
+    }
+
+  }
+
+}
+
 
 // function to get time in microseconds
 unsigned long getTime()
@@ -29,7 +69,7 @@ void printArray(int* array, int arrayLength)
   }
 
   // if array is regular
-  else if (arrayLength > 20 && arrayLength <= 300)
+  else if (arrayLength > 20 && arrayLength <= 100)
   {
     int i;
     printf("[%d", array[0]);
@@ -41,7 +81,7 @@ void printArray(int* array, int arrayLength)
   }
 
   // if array is large
-  else if (arrayLength > 300)
+  else if (arrayLength > 100)
   {
     int i;
     printf("[%d", array[0]);
@@ -71,33 +111,65 @@ void printTime(unsigned long time)
 
   if (time < 1000)
   {
-    printf("\e[32mDone in %lu µs\e[0m\n\n", time);
+    printf("\e[33m%lu µs\e[0m\n", time);
   }
   else if (time < 1000000)
   {
-    printf("\e[32mDone in %.2f ms\e[0m\n\n", time / 1000.00);
+    printf("\e[33m%.2f ms\e[0m\n", time / 1000.00);
   }
   else if (time < 1000000000)
   {
-    printf("\e[32mDone in %.2f s\e[0m\n\n", time / 1000000.00);
+    printf("\e[33m%.2f s\e[0m\n", time / 1000000.00);
   }
 
 }
 
 
+// function for bubble sorting
+unsigned long bubbleSort(int* array, int arrayLength, int loglevel)
+{
+
+  int i, j, swap;
+  unsigned long chrono, time;
+  chrono = getTime();
+  for (i = 0; i < arrayLength; i++)
+  {
+    for (j = 0; j < arrayLength - 1; j++)
+    {
+
+      // swap adjacent unsorted values
+      if (array[j] > array[j+1])
+      {
+        swap = array[j+1];
+        array[j+1] = array[j];
+        array[j] = swap;
+      }
+    }
+  }
+  time = getTime() - chrono;
+
+  // print the sorted values
+  printf("\e[31mBUBBLE SORT : \e[0m"); printTime(time);
+  if (loglevel == 1) { printArray(array, arrayLength); }
+
+  return time;
+
+}
+
+
 // function for selection sorting
-unsigned long selectionSort(int* array, int arrayLength)
+unsigned long selectionSort(int* array, int arrayLength, int loglevel)
 {
 
   int i, j, swap, minimum;
   unsigned long chrono, time;
   chrono = getTime();
-  for (i = 0; i < arrayLength-1; i++)
+  for (i = 0; i < arrayLength - 1; i++)
   {
 
     // scan array for minimum
     minimum = i;
-    for (j = i+1; j < arrayLength; j++)
+    for (j = i + 1; j < arrayLength; j++)
     {
       if (array[j] < array[minimum]) { minimum = j; }
     }
@@ -114,48 +186,16 @@ unsigned long selectionSort(int* array, int arrayLength)
   time = getTime() - chrono;
 
   // print the sorted values
-  printf("\e[31mSELECTION SORT : \e[0m\n\n");
-  printArray(array, arrayLength);
-  printTime(time);
-  return time;
+  printf("\e[31mSELECTION SORT : \e[0m"); printTime(time);
+  if (loglevel == 1) { printArray(array, arrayLength); }
 
-}
-
-
-// function for bubble sorting
-unsigned long bubbleSort(int* array, int arrayLength)
-{
-
-  int i, j, swap;
-  unsigned long chrono, time;
-  chrono = getTime();
-  for (i = 0; i < arrayLength; i++)
-  {
-    for (j = 0; j < arrayLength-1; j++)
-    {
-
-      // swap adjacent unsorted values
-      if (array[j] > array[j+1])
-      {
-        swap = array[j+1];
-        array[j+1] = array[j];
-        array[j] = swap;
-      }
-    }
-  }
-  time = getTime() - chrono;
-
-  // print the sorted values
-  printf("\e[31mBUBBLE SORT : \e[0m\n\n");
-  printArray(array, arrayLength);
-  printTime(time);
   return time;
 
 }
 
 
 // function for insertion sorting
-unsigned long insertionSort(int* array, int arrayLength)
+unsigned long insertionSort(int* array, int arrayLength, int loglevel)
 {
 
   int i, j, swap;
@@ -175,241 +215,171 @@ unsigned long insertionSort(int* array, int arrayLength)
   time = getTime() - chrono;
 
   // print the sorted values
-  printf("\e[31mINSERTION SORT : \e[0m\n\n");
-  printArray(array, arrayLength);
-  printTime(time);
+  printf("\e[31mINSERTION SORT : \e[0m"); printTime(time);
+  if (loglevel == 1) { printArray(array, arrayLength); }
+
   return time;
 
 }
 
 
-// main function
+// MAIN FUNCTION
 int main (void)
 {
 
-  // variable initialisations
-  int arrayLength, arraySizesLength, arrayHighestSize, i, j, tries;
+  // variables
+  int arrayLength, tries, answer, scanfCheck, testNum, loglevel, i = 0, j = 0;
+  int arraySizes[50], arraySizesLength, arrayHighestSize;
   int Xsteps, Ysteps, Xmax, Ymax, Xscale, Yscale;
-  char answer;
 
-  // ask for manual or random input method
-  printf("\n\n");
+  // initlisation
+  arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
+  for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 100 + 100; };
+  arrayHighestSize = arraySizes[arraySizesLength-1];
+  unsigned long times[arraySizesLength*3-1];
+
+
+  // print menu
+  printf("\n1 - Input an array manually\n");
+  printf("2 - Generate a random array\n");
+  printf("3 - Generate multiple random arrays of different sizes\n");
+
+
+  // ask answer
   tries = 0;
-  do
+  while (1)
   {
-    printf("\e[A\e[2K1 - Input an array manually\n");
-    printf("2 - Generate a random array\n");
-    printf("3 - Generate multiple random arrays of different sizes\n\n");
-    printf("Choice : ");
-    scanf(" %c", &answer);
-    printf("\e[A\e[2K\e[A\e[2K\e[A\e[2K\e[A\e[2K");
+
+    // get answer
+    printf("\nChoice : ");
+    scanfCheck = scanf("%d", &answer);
     tries++;
-  }
-  while((answer != '1' && answer != '2' && answer != '3') && tries < 3);
-
-
-  // if wrong answer
-  if (answer != '1' && answer != '2' && answer != '3')
-  {
-     printf("\e[A\e[2KWrong input. Cancelling...\n\n");
-     return 1;
-  }
-
-
-  // if option 'input an array manually' is selected
-  if (answer == '1')
-  {
-
-    // ask the array length
-    tries = 0;
-    do
-    {
-      printf("\e[A\e[2KArray length : ");
-      scanf("%d", &arrayLength);
-      tries++;
-    }
-    while ((arrayLength <= 0 || arrayLength > 20) && tries < 3);
 
     // input processing
-    if (arrayLength < 1 || arrayLength > 20)
+    if (tries != 3 && (scanfCheck != 1 || (answer != 1 && answer != 2 && answer != 3)))
     {
-      printf("\e[2K\nPlease input an integer between 1 and 20\n\n");
+      printf("\n\e[31mERROR : Wrong input\e[0m\n");
+      getchar();
+    }
+    if (answer == 1 || answer == 2)
+    {
+      arrayLength = askArrayLength(answer);
+      arraySizes[0] = arrayLength;
+      loglevel = 1;
+      break;
+    }
+    else if (answer == 3)
+    {
+      arrayLength = arrayHighestSize;
+      loglevel = 0;
+      break;
+    }
+    else if (tries == 3)
+    {
+      printf("\n\e[31mERROR : Too many invalid inputs\e[0m\n\n");
       return 1;
     }
 
   }
 
 
-  // if option 'generate a random array' is selected
-  if (answer == '2')
+  // main array declaration
+  int array[arrayLength], arrayBak[arrayLength];
+
+
+  for (testNum = 0; testNum < arraySizesLength; testNum++)
   {
 
-    // ask the array length
-    tries = 0;
-    do
+    // if option 'Input an array manually' is selected
+    if (answer == 1)
     {
-      printf("\e[A\e[2KArray length : ");
-      scanf("%d", &arrayLength);
-      tries++;
+
+      printf("\n");
+      for (i = 0; i < arrayLength; i++)
+      {
+        // ask the array values
+        printf("Array value at index %d : ", i);
+        scanfCheck = scanf("%d", &array[i]);
+
+        // input processing
+        if (scanfCheck != 1)
+        {
+          printf("\n\e[31mERROR : Wrong input\e[0m\n");
+          exit(1);
+        }
+        arrayBak[i] = array[i];
+        tries++;
+      }
+
     }
-    while (arrayLength <= 0 && tries < 3);
-    printf("\e[A\e[2K\e[A\e[2K");
 
-    // input processing
-    if (arrayLength <= 0)
+    // if option 'Generate a random array' or 'Generate multiple random arrays' is selected
+    if (answer == 2 || answer == 3)
     {
-      printf("\e[2K\nPlease input a positive integer\n\n");
-      return 1;
-    }
-
-  }
-
-
-  // if option 'generate multiple random arrays' is selected
-  if (answer == '3')
-  {
-
-    // initialise procedure
-    printf("\e[A\e[2K\e[A\e[2K");
-
-    struct winsize size;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-    int arraySizes[75];
-    arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
-    for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 50; };
-    arrayHighestSize = arraySizes[arraySizesLength-1];
-
-    int array[arrayHighestSize], arrayBak[arrayHighestSize], k = 0;
-    unsigned long times[arraySizesLength*3-1];
-
-    for (j = 0; j < arraySizesLength; j++)
-    {
-
       // generate a random array
-      for (i = 0; i < arraySizes[j]; i++)
+      for (i = 0; i < arraySizes[testNum]; i++)
       {
         array[i] = rand() % 10000;
         arrayBak[i] = array[i];
       }
-
-      // print the array
-      printf("\e[33mSIZE OF ARRAY : %d\e[0m\n", arraySizes[j]);
-      printArray(array, arrayLength);
-
-      // INSERTION SORT
-      times[k] = insertionSort(array, arraySizes[j]); k++;
-
-      // SELECTION SORT
-      times[k] = selectionSort(array, arraySizes[j]); k++;
-      for (i = 0; i < arraySizes[j]; i++) { array[i] = arrayBak[i]; }
-
-      // BUBBLE SORT
-      times[k] = bubbleSort(array, arraySizes[j]); k++;
-      for (i = 0; i < arraySizes[j]; i++) { array[i] = arrayBak[i]; }
-
     }
 
-    // tab representation
-    printf("\n\e[31mRECAP (in µs) :\e[0m \n");
-    for (i = 0; i < k; i = i + 3) { printf ("%8lu, %8lu, %8lu\n", times[i], times[i+1], times[i+2]); }
+    // print the array
+    printf("\n\e[32mARRAY SIZE : %d\e[0m\n", arraySizes[testNum]);
+    if (loglevel == 1) { printArray(array, arraySizes[testNum]); }
 
-    // graphic representation
+    // bubble sort
+    times[j] = bubbleSort(array, arraySizes[testNum], loglevel); j++;
+    for (i = 0; i < arraySizes[testNum]; i++) { array[i] = arrayBak[i]; }
 
-    // determine the maximum values for x and y
-    Xmax = arrayHighestSize;
-    Ymax = times[arraySizesLength*3-1];
-    // determine the number of steps for axis graduation
-    Xsteps = (size.ws_col - 16) / 8;
-    Ysteps = (size.ws_row - 8) / 3;
-    // determine the scale
-    Xscale = Xmax / (size.ws_col - 16) * 1.03;
-    Yscale = Ymax / (size.ws_row - 8);
+    // selection sort
+    times[j] = selectionSort(array, arraySizes[testNum], loglevel); j++;
+    for (i = 0; i < arraySizes[testNum]; i++) { array[i] = arrayBak[i]; }
 
-    // print the two axis and legend
-    printf("\n\n\n\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m\n", (size.ws_col - 79) / 2);
-    printf("\n     Y ^"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
-    printf("\n       └");   for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
-    printf(">  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[2D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
-    printf("\n\e[2A\e[7C\e[s\e[7D");  for (i = 0; i <= Ysteps; i++) { printf("%6d ┼\e[10D\e[\e[3A", i * Ymax / Ysteps / 1000); }
+    // insertion sort
+    times[j] = insertionSort(array, arraySizes[testNum], loglevel); j++;
 
-//    printf("\e[0m\e[100B\n");
-//    printf("Xmax : %d\n", Xmax);
-//    printf("Ymax : %d\n", Ymax);
-//    printf("Xsteps : %d\n", Xsteps);
-//    printf("Ysteps : %d\n", Ysteps);
-//    printf("Xscale : %d\n", Xscale);
-//    printf("Yscale : %d\n", Yscale);
-
-    // print the points
-    j = 0;
-    for (i = 0; i < k; i = i + 3)
-    {
-      printf ("\e[u\e[%dC\e[%luA\e[33m+", arraySizes[j] / Xscale, times[i] / Yscale);
-      printf ("\e[u\e[%dC\e[%luA\e[31m+", arraySizes[j] / Xscale, times[i+1] / Yscale);
-      printf ("\e[u\e[%dC\e[%luA\e[32m+", arraySizes[j] / Xscale, times[i+2] / Yscale);
-//      printf ("x : %d, y : %lu\n", arraySizes[j] / Xscale, times[i] / Yscale);
-//      printf ("x : %d, y : %lu\n", arraySizes[j] / Xscale, times[i+1] / Yscale);
-//      printf ("x : %d, y : %lu\n", arraySizes[j] / Xscale, times[i+2] / Yscale);
-      j++;
-    }
-
-    printf("\e[0m\e[100B\n");
-    return 0;
+    if (answer == 1 || answer == 2) { return 0; }
 
   }
 
-
-  // create the array and reset tries
-  int array[arrayLength], arrayBak[arrayLength];
-  tries = 0;
-
-
-  // ask each value of array
-  if (answer == '1')
+  // tab representation
+  printf("\n\n\e[34mRECAP (in µs) :\e[0m \n\n");
+  printf(" Array Size │     Bubble │  Selection │  Insertion\n");
+  printf(" ───────────┼────────────┼────────────┼────────────\n");
+  for (i = 0; i < testNum; i++)
   {
-
-    // asking the array values
-    for (i = 0; i < arrayLength; i++)
-    {
-      printf("\e[A\e[2KArray value at index %d : ", i);
-      scanf("%d", &array[i]);
-      arrayBak[i] = array[i];
-      tries++;
-    }
-    printf("\e[A\e[2K\e[A\e[2K");
-
+    printf ("%11d │%11lu │%11lu │%11lu\n", arraySizes[i], times[i*3], times[i*3+1], times[i*3+2]);
   }
 
-  // generate the random array
-  if (answer == '2')
+  // get number of columns and rows
+  struct winsize size;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+  // graphic representation
+  Xmax = arrayHighestSize;
+  Ymax = times[arraySizesLength*3-3];
+  Xsteps = (size.ws_col - 16) / 8;
+  Ysteps = (size.ws_row - 8) / 3;
+  Xscale = Xmax / (size.ws_col - 16) * 1.05;
+  Yscale = Ymax / (size.ws_row - 8);
+
+  // print the graph
+  printf("\n\n\n\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m\n", (size.ws_col - 79) / 2);
+  printf("\n     Y ^"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
+  printf("\n       └");   for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
+  printf(">  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[2D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
+  printf("\n\e[2A\e[7C\e[s\e[7D");  for (i = 0; i <= Ysteps; i++) { printf("%6d ┼\e[10D\e[\e[3A", i * Ymax / Ysteps / 1000); }
+
+  // print the points
+  for (i = 0; i < testNum; i++)
   {
-    for (i = 0; i < arrayLength; i++)
-    {
-      array[i] = rand() % 10000;
-      arrayBak[i] = array[i];
-    }
+    printf ("\e[u\e[%dC\e[%luA\e[31m+", arraySizes[i] / Xscale, times[i*3] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[33m+", arraySizes[i] / Xscale, times[i*3+1] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[32m+", arraySizes[i] / Xscale, times[i*3+2] / Yscale);
   }
 
-  // print the array
-  printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
-  printArray(array, arrayLength);
-
-  // BUBBLE SORT
-  bubbleSort(array, arrayLength);
-
-  // restore unsorted array
-  for (i = 0; i < arrayLength; i++) { array[i] = arrayBak[i]; }
-
-  // SELECTION SORT
-  selectionSort(array, arrayLength);
-
-  // restore unsorted array
-  for (i = 0; i < arrayLength; i++) { array[i] = arrayBak[i]; }
-
-  // INSERTION SORT
-  insertionSort(array, arrayLength);
-
+  printf("\e[%dB\n", size.ws_row);
   return 0;
 
 }
