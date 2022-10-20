@@ -348,6 +348,7 @@ int main (void)
     Xscale = Xmax / (size.ws_col - 16);
     Yscale = Ymax / (size.ws_row - 8);
 
+    printf("\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m", (size.ws_col - 79) / 2);
     printf("\n\n     Y ◢"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
     printf("\n       └");   for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
     printf("⯈  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[D\e[D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
@@ -358,18 +359,18 @@ int main (void)
       printf("\e[u\e[7C");
       Xmove = arraySizes[i] / Xscale;
       Ymove = selectionTimes[i] / Yscale;
-      printf ("\e[%dC\e[%dA\e[31m+\e[0m\e[%dD\e[%dB", Xmove, Ymove, Xmove, Ymove);
+      printf ("\e[%dC\e[%dA\e[33m+", Xmove, Ymove);
       printf("\e[u\e[7C");
       Xmove = arraySizes[i] / Xscale;
       Ymove = bubbleTimes[i] / Yscale;
-      printf ("\e[%dC\e[%dA\e[32m+\e[0m\e[%dD\e[%dB", Xmove, Ymove, Xmove, Ymove);
+      printf ("\e[%dC\e[%dA\e[31m+", Xmove, Ymove);
       printf("\e[u\e[7C");
       Xmove = arraySizes[i] / Xscale;
       Ymove = insertionTimes[i] / Yscale;
-      printf ("\e[%dC\e[%dA\e[33m+\e[0m\e[%dD\e[%dB", Xmove, Ymove, Xmove, Ymove);
+      printf ("\e[%dC\e[%dA\e[32m+", Xmove, Ymove);
     }
 
-    printf("\e[10B\n");
+    printf("\e[0m\e[100B\n");
     return 0;
 
   }
