@@ -331,13 +331,15 @@ int main (void)
     }
 
     // tab representation
-//    printf("\nRECAP (in µs) : \n");
-//    printf ("\n\e[31mSelection sorting\e[0m\n%lu", selectionTimes[0]);
-//    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", selectionTimes[i]); }
-//    printf ("\n\e[32mBubble sorting\e[0m\n%lu", bubbleTimes[0]);
-//    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", bubbleTimes[i]); }
-//    printf ("\n\e[33mInsertion sorting\e[0m\n%lu", insertionTimes[0]);
-//    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", insertionTimes[i]); }
+    printf("\n\e[31mRECAP (in µs) :\e[0m \n");
+    printf ("\n\e[34mArray sizes\e[0m\n%d", arraySizes[0]);
+    for (i = 1; i < arraySizesLength; i++) { printf (", %d", arraySizes[i]); }
+    printf ("\n\e[32mInsertion sorting\e[0m\n%lu", insertionTimes[0]);
+    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", insertionTimes[i]); }
+    printf ("\n\e[33mSelection sorting\e[0m\n%lu", selectionTimes[0]);
+    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", selectionTimes[i]); }
+    printf ("\n\e[31mBubble sorting\e[0m\n%lu", bubbleTimes[0]);
+    for (i = 1; i < arraySizesLength; i++) { printf (", %lu", bubbleTimes[i]); }
 
     // graphic representation
 
@@ -348,10 +350,10 @@ int main (void)
     Xscale = Xmax / (size.ws_col - 16);
     Yscale = Ymax / (size.ws_row - 8);
 
-    printf("\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m", (size.ws_col - 79) / 2);
-    printf("\n\n     Y ◢"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
+    printf("\n\n\n\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m\n", (size.ws_col - 79) / 2);
+    printf("\n     Y ◢"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
     printf("\n       └");   for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
-    printf("⯈  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[D\e[D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
+    printf("⯈  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[2D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
     printf("\n\e[2A\e[s");  for (i = 0; i <= Ysteps; i++) { printf("%6d ┼\e[10D\e[\e[3A", i * Ymax / Ysteps / 1000); }
 
     for (i = 0; i < arraySizesLength; i++)
@@ -409,6 +411,7 @@ int main (void)
 
   // print the array
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
+  printArray(array, arrayLength);
 
   // SELECTION SORT
   printTime(selectionSort(array, arrayLength));
