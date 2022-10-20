@@ -5,11 +5,22 @@
 # include <sys/ioctl.h>
 
 
+// function to get time in microseconds
+unsigned long getTime()
+{
+  struct timeval currentTime;
+  gettimeofday(&currentTime, NULL);
+  return currentTime.tv_sec * (int)1e6 + currentTime.tv_usec;
+}
+
+
 // function for asking array length
 int askArrayLength(int answer)
 {
 
+  // variables
   int scanfCheck, arrayLength, tries = 0;
+
   while (1)
   {
 
@@ -41,15 +52,6 @@ int askArrayLength(int answer)
 
   }
 
-}
-
-
-// function to get time in microseconds
-unsigned long getTime()
-{
-  struct timeval currentTime;
-  gettimeofday(&currentTime, NULL);
-  return currentTime.tv_sec * (int)1e6 + currentTime.tv_usec;
 }
 
 
@@ -129,9 +131,12 @@ void printTime(unsigned long time)
 unsigned long bubbleSort(int* array, int arrayLength, int loglevel)
 {
 
+  // variables
   int i, j, swap;
   unsigned long chrono, time;
   chrono = getTime();
+
+  // sorting
   for (i = 0; i < arrayLength; i++)
   {
     for (j = 0; j < arrayLength - 1; j++)
@@ -161,9 +166,12 @@ unsigned long bubbleSort(int* array, int arrayLength, int loglevel)
 unsigned long selectionSort(int* array, int arrayLength, int loglevel)
 {
 
+  // variables
   int i, j, swap, minimum;
   unsigned long chrono, time;
   chrono = getTime();
+
+  // sorting
   for (i = 0; i < arrayLength - 1; i++)
   {
 
@@ -198,9 +206,12 @@ unsigned long selectionSort(int* array, int arrayLength, int loglevel)
 unsigned long insertionSort(int* array, int arrayLength, int loglevel)
 {
 
+  // variables
   int i, j, swap;
   unsigned long chrono, time;
   chrono = getTime();
+
+  // sorting
   for (i = 1; i < arrayLength; i++)
   {
     j = i;
@@ -229,12 +240,13 @@ int main (void)
 
   // variables
   int arrayLength, tries, answer, scanfCheck, testNum, loglevel, i = 0, j = 0;
-  int arraySizes[50], arraySizesLength, arrayHighestSize;
+  int arraySizes[75], arraySizesLength, arrayHighestSize;
   int Xsteps, Ysteps, Xmax, Ymax, Xscale, Yscale;
+
 
   // initlisation
   arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
-  for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 100 + 100; };
+  for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 50 + 100; };
   arrayHighestSize = arraySizes[arraySizesLength-1];
   unsigned long times[arraySizesLength*3-1];
 
@@ -283,7 +295,7 @@ int main (void)
   }
 
 
-  // main array declaration
+  // array declaration
   int array[arrayLength], arrayBak[arrayLength];
 
 
@@ -313,6 +325,7 @@ int main (void)
 
     }
 
+
     // if option 'Generate a random array' or 'Generate multiple random arrays' is selected
     if (answer == 2 || answer == 3)
     {
@@ -323,6 +336,7 @@ int main (void)
         arrayBak[i] = array[i];
       }
     }
+
 
     // print the array
     printf("\n\e[32mARRAY SIZE : %d\e[0m\n", arraySizes[testNum]);
@@ -343,7 +357,13 @@ int main (void)
 
   }
 
-  // tab representation
+
+  // get number of columns and rows
+  struct winsize size;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+
+  // table representation
   printf("\n\n\e[34mRECAP (in µs) :\e[0m \n\n");
   printf(" Array Size │     Bubble │  Selection │  Insertion\n");
   printf(" ───────────┼────────────┼────────────┼────────────\n");
@@ -352,9 +372,6 @@ int main (void)
     printf ("%11d │%11lu │%11lu │%11lu\n", arraySizes[i], times[i*3], times[i*3+1], times[i*3+2]);
   }
 
-  // get number of columns and rows
-  struct winsize size;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
   // graphic representation
   Xmax = arrayHighestSize;
