@@ -198,8 +198,7 @@ int main (void)
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
   // ask for manual or random input method
-  printf("\nWelcome to my simple sorting algorithms showcase !");
-  printf("\nPlease chose an option :\n\n\n");
+  printf("\n\n");
   tries = 0;
   do
   {
