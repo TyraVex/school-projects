@@ -188,15 +188,9 @@ int main (void)
 {
 
   // variable initialisations
-  int arraySizes[50];
-  int arrayLength, arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
-  int i, j, tries;
+  int arrayLength, arraySizesLength, arrayHighestSize, i, j, tries;
   int Xsteps, Ysteps, Xmax, Ymax, Xscale, Yscale;
-  for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 200 + 1000; };
   char answer;
-
-  struct winsize size;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
   // ask for manual or random input method
   printf("\n\n");
@@ -277,9 +271,17 @@ int main (void)
 
     // initialise procedure
     printf("\e[A\e[2K\e[A\e[2K");
-    int array[arraySizes[arraySizesLength-1]], arrayBak[arraySizes[arraySizesLength-1]];
-    int k = 0;
-    unsigned long times[arraySizesLength*3];
+
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+    int arraySizes[75];
+    arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
+    for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 50; };
+    arrayHighestSize = arraySizes[arraySizesLength-1];
+
+    int array[arrayHighestSize], arrayBak[arrayHighestSize], k = 0;
+    unsigned long times[arraySizesLength*3-1];
 
     for (j = 0; j < arraySizesLength; j++)
     {
@@ -315,13 +317,13 @@ int main (void)
     // graphic representation
 
     // determine the maximum values for x and y
-    Xmax = arraySizes[arraySizesLength-1];
+    Xmax = arrayHighestSize;
     Ymax = times[arraySizesLength*3-1];
     // determine the number of steps for axis graduation
     Xsteps = (size.ws_col - 16) / 8;
     Ysteps = (size.ws_row - 8) / 3;
     // determine the scale
-    Xscale = Xmax / (size.ws_col - 16) * 1.05;
+    Xscale = Xmax / (size.ws_col - 16) * 1.03;
     Yscale = Ymax / (size.ws_row - 8);
 
     // print the two axis and legend
@@ -393,20 +395,20 @@ int main (void)
   printf("\n\e[31mARRAY VALUES :\e[0m\n\n");
   printArray(array, arrayLength);
 
-  // SELECTION SORT
-  printTime(selectionSort(array, arrayLength));
+  // BUBBLE SORT
+  bubbleSort(array, arrayLength);
 
   // restore unsorted array
   for (i = 0; i < arrayLength; i++) { array[i] = arrayBak[i]; }
 
-  // BUBBLE SORT
-  printTime(bubbleSort(array, arrayLength));
+  // SELECTION SORT
+  selectionSort(array, arrayLength);
 
   // restore unsorted array
   for (i = 0; i < arrayLength; i++) { array[i] = arrayBak[i]; }
 
   // INSERTION SORT
-  printTime(insertionSort(array, arrayLength));
+  insertionSort(array, arrayLength);
 
   return 0;
 
