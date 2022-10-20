@@ -10,3 +10,4 @@ To test them, a few tools are available (sort.c) :</br>
 - Generate multiple arrays automatically
 - The third option also features graph visualisation capabilities.
 
+Source code : <a href="https://github.com/TyraVex/school-projects/tree/main/C">Github</a>
