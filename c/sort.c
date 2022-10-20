@@ -383,10 +383,10 @@ int main (void)
 
   // print the graph
   printf("\n\n\n\e[%dCY : Time in ms | X : Array size | \e[32mInsertion sort\e[0m | \e[33mSelection sort\e[0m | \e[31mBubble sort\e[0m\n", (size.ws_col - 79) / 2);
-  printf("\n     Y ^"); for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
-  printf("\n       └");   for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
-  printf(">  X\n");       for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[2D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
-  printf("\n\e[2A\e[7C\e[s\e[7D");  for (i = 0; i <= Ysteps; i++) { printf("%6d ┼\e[10D\e[\e[3A", i * Ymax / Ysteps / 1000); }
+  printf("\n     Y ^");            for (i = 0; i < size.ws_row - 8; i++) { printf("\n       │"); }
+  printf("\n       └");            for (i = 0; i < size.ws_col - 16; i++) { printf("─"); }
+  printf(">  X\n");                for (i = 0; i <= Xsteps; i++) { printf("\e[C%7d\e[2D\e[A┴\e[B\e[C", i * Xmax / Xsteps); }
+  printf("\n\e[2A\e[7C\e[s\e[7D"); for (i = 0; i <= Ysteps; i++) { printf("%6d ┼\e[10D\e[\e[3A", i * Ymax / Ysteps / 1000); }
 
   // print the points
   for (i = 0; i < testNum; i++)
