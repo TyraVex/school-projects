@@ -14,47 +14,6 @@ unsigned long getTime()
 }
 
 
-// function for asking array length
-int askArrayLength(int answer)
-{
-
-  // variables
-  int scanfCheck, arrayLength, tries = 0;
-
-  while (1)
-  {
-
-    // ask array length
-    printf("\nArray length : ");
-    scanfCheck = scanf("%d", &arrayLength);
-    tries++;
-
-    // input processing
-    if (tries != 3 && ((scanfCheck != 1 && answer == 1) || (answer == 1 && (arrayLength > 20 || arrayLength < 1))))
-    {
-      printf("\n\e[31mERROR : Please provide a value between 0 and 20\e[0m\n");
-      getchar();
-    }
-    else if (tries != 3 && (scanfCheck != 1 || arrayLength < 1))
-    {
-      printf("\n\e[31mERROR : Please provide an integer greater or equal than 0\e[0m\n");
-      getchar();
-    }
-    else if ((answer == 1 && (arrayLength <= 20 || arrayLength > 0)) || arrayLength > 0)
-    {
-      return arrayLength;
-    }
-    else if (tries == 3)
-    {
-      printf("\n\e[31mERROR : Too many invalid inputs\e[0m\n\n");
-      exit(1);
-    }
-
-  }
-
-}
-
-
 // function to print arrays in a convenient way
 void printArray(int* array, int arrayLength)
 {
@@ -271,12 +230,10 @@ int main (void)
     if (tries != 3 && (scanfCheck != 1 || (answer != 1 && answer != 2 && answer != 3)))
     {
       printf("\n\e[31mERROR : Wrong input\e[0m\n");
-      getchar();
+      fscanf(stdin, "%*[^\n]%*c");
     }
     if (answer == 1 || answer == 2)
     {
-      arrayLength = askArrayLength(answer);
-      arraySizes[0] = arrayLength;
       loglevel = 1;
       break;
     }
@@ -290,6 +247,45 @@ int main (void)
     {
       printf("\n\e[31mERROR : Too many invalid inputs\e[0m\n\n");
       return 1;
+    }
+
+  }
+
+
+  // if option 'Input an array manually' or 'Generate a random array' is selected
+  tries = 0;
+  if (answer == 1 || answer == 2)
+  {
+
+    while (1)
+    {
+
+      // ask array length
+      printf("\nArray length : ");
+      scanfCheck = scanf("%d", &arrayLength);
+      tries++;
+
+      if (scanfCheck != 1) { fscanf(stdin, "%*[^\n]%*c"); arrayLength = 0; }
+
+      if ((answer == 1 && arrayLength > 0 && arrayLength <= 20) || (answer == 2 && arrayLength > 0))
+      {
+        arraySizes[0] = arrayLength;
+        break;
+      }
+      else if (tries == 3)
+      {
+        printf("\n\e[31mERROR : Too many invalid inputs\e[0m\n\n");
+        exit(1);
+      }
+      else if (answer == 1)
+      {
+        printf("\n\e[31mERROR : Please provide a value between 1 and 20\e[0m\n");
+      }
+      else if (answer == 2)
+      {
+        printf("\n\e[31mERROR : Please provide an integer greater than 0\e[0m\n");
+      }
+
     }
 
   }
