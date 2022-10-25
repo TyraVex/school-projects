@@ -39,7 +39,7 @@ do
 
  // Affichage d'un menu
 
-    printf("\n1 - Generer un tableau de maniere aleatoire \n");
+    printf("1 - Generer un tableau de maniere aleatoire \n");
     printf("2 - Rechercher un element du tableau  \n");
     printf("3 - Ajouter un element au tableau \n");
     printf("4 - Modifier la valeur d'un element du tableau \n");
@@ -48,7 +48,7 @@ do
     printf("7 - Afficher la valeur d'un element en fonction de sa position \n");
     printf("8 - Test des performances de la  fonction ajout\n");
     printf("9 - Quitter \n");
-    printf("\nVotre choix: ");
+    printf("\n\nVotre choix : ");
     scanf("%d", &choix);
     getchar(); //Suppression du retour chariot qui reste dans le buffer de lecture
 
