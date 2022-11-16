@@ -86,6 +86,54 @@ void printTime(unsigned long time)
 }
 
 
+// function for even-odd sorting
+unsigned long evenOddSort(int* array, int arrayLength, int loglevel)
+{
+
+  // variables
+  int i, j, swap;
+  unsigned long chrono, time;
+  chrono = getTime();
+
+  // sorting
+  for (i = 0; i < arrayLength; i++)
+  {
+    if (i % 1)
+    {
+      for (j = 2; j < arrayLength - 1; j += 2)
+      {
+        if (array[j-1] > array[j])
+        {
+          swap = array[j-1];
+          array[j-1] = array[j];
+          array[j] = swap;
+        }
+      }
+    }
+    else
+    {
+      for (j = 1; j < arrayLength - 1; j += 2)
+      {
+        if (array[j-1] > array[j])
+        {
+          swap = array[j-1];
+          array[j-1] = array[j];
+          array[j] = swap;
+        }
+      }
+    }
+  }
+  time = getTime() - chrono;
+
+  // print the sorted values
+  printf("\e[31mEVEN-ODD SORT : \e[0m"); printTime(time);
+  if (loglevel == 1) { printArray(array, arrayLength); }
+
+  return time;
+
+}
+
+
 // function for bubble sorting
 unsigned long bubbleSort(int* array, int arrayLength, int loglevel)
 {
@@ -207,7 +255,7 @@ int main (void)
   arraySizesLength = sizeof(arraySizes) / sizeof(arraySizes[0]);
   for (i = 0; i < arraySizesLength; i++) { arraySizes[i] = i * 50 + 100; };
   arrayHighestSize = arraySizes[arraySizesLength-1];
-  unsigned long times[arraySizesLength*3-1];
+  unsigned long times[arraySizesLength*4-1];
 
 
   // print menu
@@ -338,6 +386,10 @@ int main (void)
     printf("\n\e[32mARRAY SIZE : %d\e[0m\n", arraySizes[testNum]);
     if (loglevel == 1) { printArray(array, arraySizes[testNum]); }
 
+    // odd-even sort
+    times[j] = evenOddSort(array, arraySizes[testNum], loglevel); j++;
+    for (i = 0; i < arraySizes[testNum]; i++) { array[i] = arrayBak[i]; }
+
     // bubble sort
     times[j] = bubbleSort(array, arraySizes[testNum], loglevel); j++;
     for (i = 0; i < arraySizes[testNum]; i++) { array[i] = arrayBak[i]; }
@@ -361,17 +413,17 @@ int main (void)
 
   // table representation
   printf("\n\n\e[34mRECAP (in µs) :\e[0m \n\n");
-  printf(" Array Size │     Bubble │  Selection │  Insertion\n");
-  printf(" ───────────┼────────────┼────────────┼────────────\n");
+  printf(" Array Size │   Odd Even │     Bubble │  Selection │  Insertion\n");
+  printf(" ───────────┼────────────┼────────────┼────────────┼────────────\n");
   for (i = 0; i < testNum; i++)
   {
-    printf ("%11d │%11lu │%11lu │%11lu\n", arraySizes[i], times[i*3], times[i*3+1], times[i*3+2]);
+    printf ("%11d │%11lu │%11lu │%11lu │%11lu\n", arraySizes[i], times[i*3], times[i*3+1], times[i*3+2], times[i*3+3]);
   }
 
 
   // graphic representation
   Xmax = arrayHighestSize;
-  Ymax = times[arraySizesLength*3-3];
+  Ymax = times[arraySizesLength*4-3];
   Xsteps = (size.ws_col - 16) / 8;
   Ysteps = (size.ws_row - 8) / 3;
   Xscale = Xmax / (size.ws_col - 16) * 1.05;
@@ -387,9 +439,10 @@ int main (void)
   // print the points
   for (i = 0; i < testNum; i++)
   {
-    printf ("\e[u\e[%dC\e[%luA\e[31m+", arraySizes[i] / Xscale, times[i*3] / Yscale);
-    printf ("\e[u\e[%dC\e[%luA\e[33m+", arraySizes[i] / Xscale, times[i*3+1] / Yscale);
-    printf ("\e[u\e[%dC\e[%luA\e[32m+", arraySizes[i] / Xscale, times[i*3+2] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[31m+", arraySizes[i] / Xscale, times[i*4] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[32m+", arraySizes[i] / Xscale, times[i*4+1] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[33m+", arraySizes[i] / Xscale, times[i*4+2] / Yscale);
+    printf ("\e[u\e[%dC\e[%luA\e[34m+", arraySizes[i] / Xscale, times[i*4+3] / Yscale);
   }
 
   printf("\e[%dB\n", size.ws_row);

@@ -121,6 +121,7 @@ do
                 }
                 gettimeofday(&debut,NULL); //Date de debut de la modification
 
+                printf("oldpos %d pos %d", oldpos, position);
                 modifier(T1, dernier, oldpos, val);
 
                 gettimeofday(&fin,NULL); //Date de fin de la suppression
@@ -244,13 +245,14 @@ int ajouter(element T[], int *taille, element valeur, int taillemax)
 /**************************************************************************************************/
 element modifier(element T[], const int taille, const int pos, const element valeur)
 {
-//  if(pos == 0 && pos < MAXCOMP)
-//  {
+  if(pos != 0 && pos < MAXCOMP)
+  {
+//    printf("T[%d] (= %lf) = valeur %lf", pos, T[pos], valeur);
     T[pos] = valeur;
-//    if (valeur == 0) return 1;
-//    else return valeur;
+    if (valeur == 0) return 1;
+    else return valeur;
     return valeur;
-//  }
+  }
   return 0.0;
 }
 
@@ -264,14 +266,14 @@ element modifier(element T[], const int taille, const int pos, const element val
 /**************************************************************************************************/
 element supprimer(element T[], int *taille, const int pos)
 {
-//  if(pos == 0 && pos < MAXCOMP)
-//  {
+  if(pos != 0 && pos < MAXCOMP)
+  {
     element historique = T[pos];
     T[pos] = T[*taille];
     *taille = *taille - 1;
-//    if (historique == 0) return 1;
-//    else return historique;
-//  }
+    if (historique == 0) return 1;
+    else return historique;
+  }
   return 0.0;
 }
 
