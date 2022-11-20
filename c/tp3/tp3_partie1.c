@@ -3,7 +3,7 @@
 /* Application : tp3_partie1.c - traitement de base sur les tableaux non tries                 */
 /* Date : 08/11/2021                                                                           */
 /* Version : 1.0                                                                               */
-/* Compilation : gcc tp3_partie1.c -o tp3_partie1 -lm 					        */
+/* Compilation : gcc tp3_partie1.c -o tp3_partie1 -lm 					                               */
 /* Utilisation : ./tp3_partiel1                                                                */
 /***********************************************************************************************/
 
@@ -79,7 +79,7 @@ do
                 if (position==0) printf("La recherche a echoue !!!\n");
                  else printf("La valeur %f a ete trouve a la position %d \n", val, position);
                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                printf("La recherche sequentielle de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);                             
+                printf("La recherche sequentielle de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                 break;
         case 3 : printf("\nAJOUT DANS UN TABLEAU NON TRIE \n");
                 printf("saisie de la valeur a jouter : ");
@@ -121,7 +121,6 @@ do
                 }
                 gettimeofday(&debut,NULL); //Date de debut de la modification
 
-                printf("oldpos %d pos %d", oldpos, position);
                 modifier(T1, dernier, oldpos, val);
 
                 gettimeofday(&fin,NULL); //Date de fin de la suppression
@@ -129,7 +128,7 @@ do
                           else if (position!=0)
                                 {
                                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                                printf("La modification de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree); 
+                                printf("La modification de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                                 }
                 break;
         case 5 : printf("\nSUPPRESSION DANS UN TABLEAU NON TRIE \n");
@@ -151,7 +150,7 @@ do
                           else if (position!=0)
                                 {
                                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                                printf("La suppression de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree); 
+                                printf("La suppression de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                                 }
                 break;
         case 6 : printf("\nAFFICHAGE D'UN TABLEAU\n");
@@ -247,7 +246,6 @@ element modifier(element T[], const int taille, const int pos, const element val
 {
   if(pos != 0 && pos < MAXCOMP)
   {
-//    printf("T[%d] (= %lf) = valeur %lf", pos, T[pos], valeur);
     T[pos] = valeur;
     if (valeur == 0) return 1;
     else return valeur;

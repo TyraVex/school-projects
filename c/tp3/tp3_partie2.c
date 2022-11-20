@@ -3,7 +3,7 @@
 /* Application : tp3_partie1.c - traitement de base sur les tableaux non tries                 */
 /* Date : 08/11/2021                                                                           */
 /* Version : 1.0                                                                               */
-/* Compilation : gcc tp3_partie1.c -o tp3_partie1 -lm 					        */
+/* Compilation : gcc tp3_partie1.c -o tp3_partie1 -lm 					                               */
 /* Utilisation : ./tp3_partiel1                                                                */
 /***********************************************************************************************/
 
@@ -27,12 +27,13 @@ int main()
  element T1[MAXCOMP+1]; //Tableaux de MAXCOMP d'entiers. Le +1 est pour la sentinnelle !!!
  int dernier=0 ; //position du dernier element saisi du tableau
  element val ; // Valeur a ajoutee
- int position=0; //position d'un element rechercher
+ int position=0, oldpos; //position d'un element rechercher
  long duree;
  struct timeval debut, fin ;
  int choix; //Saisie reponse user pour le choix de la methode de generation du tableau
  int i, j, k; //compteur de boucle
- int minimum, swap; // sort
+ int minimum, swap; //sort
+
 do
 {
 
@@ -101,11 +102,17 @@ do
                 if (position==0) printf("La recherche a echoue !!!\n");
                  else printf("La valeur %f a ete trouve a la position %d \n", val, position);
                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                printf("La recherche sequentielle de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);                             
+                printf("La recherche sequentielle de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                 break;
         case 3 : printf("\nAJOUT DANS UN TABLEAU NON TRIE \n");
                 printf("saisie de la valeur a jouter : ");
                 scanf("%lf",&val); //Adapter au fait que les elements sont des "double" !!!
+                position=rechercher(T1, dernier, val);
+                if (position != 0)
+                {
+                  printf("Cette valeur est deja presente dans le tableau\n\n");
+                  break;
+                }
                 getchar();
                 gettimeofday(&debut,NULL); //Date de debut de l'ajout
 
@@ -121,18 +128,30 @@ do
                 scanf("%lf",&val);
                 getchar();
                 position=rechercher(T1,dernier, val);
+                if (position == 0)
+                {
+                  printf("Cette valeur est introuvable\n\n");
+                  break;
+                }
+                oldpos=position;
                 printf("Saisir la valeur a affecter : ");
                 scanf("%lf",&val);
+                position=rechercher(T1, dernier, val);
+                if (position != 0)
+                {
+                  printf("Cette valeur est deja presente dans le tableau\n\n");
+                  break;
+                }
                 gettimeofday(&debut,NULL); //Date de debut de la modification
 
-                modifier(T1, dernier, position, val);
+                modifier(T1, dernier, oldpos, val);
 
                 gettimeofday(&fin,NULL); //Date de fin de la suppression
                 if ((position!=0) && (debut.tv_sec==fin.tv_sec)) printf("La modification de la valeur %.2lf dans un tableau de %d elements a pris %d us !!! \n",val, dernier,(int) (fin.tv_usec-debut.tv_usec)); 
                           else if (position!=0)
                                 {
                                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                                printf("La modification de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree); 
+                                printf("La modification de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                                 }
                 break;
         case 5 : printf("\nSUPPRESSION DANS UN TABLEAU NON TRIE \n");
@@ -140,6 +159,11 @@ do
                 scanf("%lf",&val);
                 getchar();
                 position=rechercher(T1,dernier, val);
+                if (position == 0)
+                {
+                  printf("Cette valeur est introuvable");
+                  break;
+                }
                 gettimeofday(&debut,NULL); //Date de debut de la suppression
 
                 supprimer(T1, &dernier, position);
@@ -149,7 +173,7 @@ do
                           else if (position!=0)
                                 {
                                 duree= (fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
-                                printf("La suppression de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree); 
+                                printf("La suppression de la valeur %.2lf dans un tableau de %d elements a pris %ld us !!! \n",val, dernier,duree);
                                 }
                 break;
         case 6 : printf("\nAFFICHAGE D'UN TABLEAU\n");
@@ -194,7 +218,7 @@ void lister (const element T[], const int taille)
 }
 
 /**************************************************************************************************/
-/*Fonction : rechercher                                                                           */
+/* Fonction : rechercher                                                                           */
 /* Description : Rechercher un element dans un tableau non trie par la methode de la sentinnelle  */
 /* Entrees : T le tableau, taille son nombre de composantes et valeur l'element a ajoute          */
 /* Sorties :                                                                                      */
@@ -212,21 +236,25 @@ int rechercher(element T[], const int taille, const element valeur)
 
 }
 
-/**************************************************************************************************/
-/* Fonction : ajouter                                                                               */
+/***************************************************************************************************/
+/* Fonction : ajouter                                                                              */
 /* Description : Ajouter un element au tableau                                                     */
-/* Entrees : T le tableau, taille son nombre de composantes,valeur l'element a ajoute et taillemax *
+/* Entrees : T le tableau, taille son nombre de composantes,valeur l'element a ajoute et taillemax */
 /* Le nombre maximal de composants de T                                                            */
 /* Sorties : T le tableau, taille son nombre de composants                                         */
 /* Retourne : la position de l'element ajoute ou 0 si l'ajout n'est pas effectue                   */
-/**************************************************************************************************/
+/***************************************************************************************************/
 int ajouter(element T[], int *taille, element valeur, int taillemax)
 {
 
-  int position = 0;
-  while (T[position] < valeur && position < MAXCOMP) position++;
-  T[position] = valeur;
-
+  if (*taille == MAXCOMP)
+    return 1;
+  else
+  {
+    *taille = *taille + 1;
+    T[*taille] = valeur;
+    return 0;
+  }
 }
 
 /**************************************************************************************************/
@@ -239,8 +267,14 @@ int ajouter(element T[], int *taille, element valeur, int taillemax)
 /**************************************************************************************************/
 element modifier(element T[], const int taille, const int pos, const element valeur)
 {
-  if (pos != 0); T[pos] = valeur; return 0.0;
-  else return 1.0;
+  if(pos != 0 && pos < MAXCOMP)
+  {
+    T[pos] = valeur;
+    if (valeur == 0) return 1;
+    else return valeur;
+    return valeur;
+  }
+  return 0.0;
 }
 
 /**************************************************************************************************/
@@ -253,7 +287,14 @@ element modifier(element T[], const int taille, const int pos, const element val
 /**************************************************************************************************/
 element supprimer(element T[], int *taille, const int pos)
 {
-  if (pos != 0); T[pos] = T[*taille]; *taille = *taille - 1; return 0.0;
-  else return 1.0;
+  if(pos != 0 && pos < MAXCOMP)
+  {
+    element historique = T[pos];
+    T[pos] = T[*taille];
+    *taille = *taille - 1;
+    if (historique == 0) return 1;
+    else return historique;
+  }
+  return 0.0;
 }
 
