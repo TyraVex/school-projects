@@ -275,9 +275,9 @@ float ecarttypenotes(Tnote T[], const Tindice der, const Tnote moyenne)
   for (position = 0; position < der+1; position++)
   {
     ecarttype += (T[position] - moyenne) * (T[position] - moyenne);
-    printf("ecarttype %f, to add %f = (%f - %f)^2\n", ecarttype, (T[position] - moyenne) * (T[position] - moyenne), T[position], moyenne);
+//    printf("ecarttype %f, to add %f = (%f - %f)^2\n", ecarttype, (T[position] - moyenne) * (T[position] - moyenne), T[position], moyenne);
   }
-  printf("sqrt(%f / %d)\n", ecarttype, (der+1));
+//  printf("sqrt(%f / %d)\n", ecarttype, (der+1));
   ecarttype = sqrt(ecarttype / (der+1));
   return ecarttype;
 
