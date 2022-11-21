@@ -18,7 +18,7 @@
 //Definition des constantes de l'application
 #define     MAXCOMP     100000   // Nombre maximal de composants
 #define     MAXAFF      100      // Nombre maximal de composants pour l'affichage
-#define     MAXL        16      // Nombre maximal de composant par ligne pour l'affichage
+#define     MAXL        10      // Nombre maximal de composant par ligne pour l'affichage
 #define     MOYENNE     1000
 
 typedef double element;

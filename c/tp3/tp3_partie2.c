@@ -19,7 +19,7 @@ int ajouter(element T[], int *taille, element valeur, int taillemax);
 int rechercher(element T[], const int taille, const element valeur);
 element modifier(element T[], const int taille, const int pos, const element valeur);
 element supprimer(element T[], int *taille, const int pos);
-
+void sort(element T[], int dernier);
 
 int main()
 {
@@ -31,8 +31,8 @@ int main()
  long duree;
  struct timeval debut, fin ;
  int choix; //Saisie reponse user pour le choix de la methode de generation du tableau
- int i, j, k; //compteur de boucle
- int minimum, swap; //sort
+ int tailleTest, i; // pour test des perfs
+ srand(time(NULL)); // init la fonction rand
 
 do
 {
@@ -46,6 +46,7 @@ do
     printf("5 - Supprimer un element du tableau \n");
     printf("6 - Lister tous les elements du tableau \n");
     printf("7 - Afficher la valeur d'un element en fonction de sa position \n");
+    printf("8 - Test des performances de la  fonction ajout\n");
     printf("9 - Quitter \n");
     printf("\nVotre choix: ");
     scanf("%d", &choix);
@@ -67,27 +68,7 @@ do
                 }
                 while ((dernier<1) || (dernier>MAXCOMP));
                 genealea(T1,dernier);
-
-                // sorting
-                for (k = 1; k < dernier; k++)
-                {
-
-                  // scan array for minimum
-                  minimum = k;
-                  for (j = k + 1; j < dernier + 1; j++)
-                  {
-                    if (T1[j] < T1[minimum]) { minimum = j; }
-                  }
-
-                  // swap a new minimum if found
-                  if (minimum != k)
-                  {
-                    swap = T1[minimum];
-                    T1[minimum] = T1[k];
-                    T1[k] = swap;
-                  }
-
-                }
+                sort(T1,dernier);
 
                 break;
         case 2 : printf("\nRECHERCHE DANS UN TABLEAU NON TRIE \n");
@@ -110,17 +91,16 @@ do
                 position=rechercher(T1, dernier, val);
                 if (position != 0)
                 {
-                  printf("Cette valeur est deja presente dans le tableau\n\n");
+                  printf("Cette valeur est deja presente dans le tableau\n");
                   break;
                 }
                 getchar();
                 gettimeofday(&debut,NULL); //Date de debut de l'ajout
 
                 ajouter(T1, &dernier, val, MAXCOMP);
-                printf("\nAjout : T1[%d]=%lf\n\n", dernier, val);
 
                 gettimeofday(&fin,NULL); //Date de la fin de l'ajout
-				duree= (double)(fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
+        				duree=(double)(fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
                 printf("L'ajout d'un element dans un tableau de %d elements a pris %ld us !!! \n",dernier,duree);
                  break;
         case 4 : printf("\nMODIFICATION DANS UN TABLEAU NON TRIE \n");
@@ -130,7 +110,7 @@ do
                 position=rechercher(T1,dernier, val);
                 if (position == 0)
                 {
-                  printf("Cette valeur est introuvable\n\n");
+                  printf("Cette valeur est introuvable\n");
                   break;
                 }
                 oldpos=position;
@@ -139,7 +119,7 @@ do
                 position=rechercher(T1, dernier, val);
                 if (position != 0)
                 {
-                  printf("Cette valeur est deja presente dans le tableau\n\n");
+                  printf("Cette valeur est deja presente dans le tableau\n");
                   break;
                 }
                 gettimeofday(&debut,NULL); //Date de debut de la modification
@@ -161,7 +141,7 @@ do
                 position=rechercher(T1,dernier, val);
                 if (position == 0)
                 {
-                  printf("Cette valeur est introuvable");
+                  printf("Cette valeur est introuvable\n");
                   break;
                 }
                 gettimeofday(&debut,NULL); //Date de debut de la suppression
@@ -188,6 +168,26 @@ do
                  printf("\nT1[%d]=%lf\n", position, T1[position]);
 
                  break;
+        case 8 : printf("\nTEST DES PERFORMANCES DE LA FONCTION AJOUT !!!\n");
+                 val = rand() % 1000;
+                 printf("\nTaille maximum du tableau à générer pour le test : ");
+                 scanf("%d", &tailleTest);
+                 if (tailleTest > MAXCOMP)
+                 {
+                   printf("\nLa valeur entrée est supérieure à la taille maximale de tableau possible.");
+                   break;
+                 }
+                 for (dernier = 999; dernier < tailleTest; dernier = dernier+999)
+                 {
+                   genealea(T1,dernier);
+                   sort(T1, dernier);
+                   gettimeofday(&debut,NULL); //Date de debut de l'ajout
+                   ajouter(T1, &dernier, val, MAXCOMP);
+                   gettimeofday(&fin,NULL); //Date de la fin de l'ajout
+                   duree=(double)(fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
+                   printf("L'ajout d'un element dans un tableau de %d elements a pris %ld us !!! \n",dernier,duree);
+                 }
+                 break;
         case 9 : printf("\nFin de l'application !!!\n");
                  break;
         default : printf("Cette saisie n'est pas correcte !!! !!! \n");
@@ -212,8 +212,54 @@ while (choix!=9);
 void lister (const element T[], const int taille)
 {
 
-   printf("\n");
-   for (int position=1; position < taille+1 && position < MAXAFF; position++) printf("T1[%d]=%lf\n", position, T[position]);
+  int position, perLine = 0;
+
+  // if array is small
+  if (taille <= 20)
+  {
+    for (int position=1; position < taille+1; position++) printf("T1[%d]=%lf\n", position, T[position]);
+    printf("\n");
+  }
+
+  // if array is regular
+  else if (taille > 20 && taille <= 100)
+  {
+    printf("[");
+    for (position=1; position < taille; position++)
+    {
+      perLine++;
+      if (perLine > MAXL)
+      {
+        perLine=1;
+        printf("\n");
+      }
+      printf("%lf, ", T[position]);
+    }
+    if (perLine + 1 > MAXL) printf("\n");
+    printf("%lf]", T[taille]);
+  }
+
+  // if array is large
+  else if (taille > 100)
+  {
+    printf("[%lf", T[1]);
+    for (position=2; position < 4; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf(", ...");
+    for (position = taille / 2 - 1; position < taille / 2 + 2; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf(", ...");
+    for (position = taille - 2; position < taille + 1; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf("]\n");
+  }
+  printf("\n");
 
 }
 
@@ -227,12 +273,26 @@ void lister (const element T[], const int taille)
 int rechercher(element T[], const int taille, const element valeur)
 {
 
-  int position = 0;
-  while(position < taille) {
-    position++;
-    if (T[position] == valeur) return position;
+  int position = (taille+1)/2, oldpos, borneSup = taille+1, borneInf = 0;
+
+  //recherche dichotomique
+  while(T[position] != valeur)
+  {
+    oldpos = position;
+    if (T[position] < valeur)
+    {
+      borneInf = position;
+      position = position + (borneSup - position) / 2;
+    }
+    else if (T[position] > valeur)
+    {
+      borneSup = position;
+      position = position - (position - borneInf) / 2;
+    }
+    if (position == oldpos) return 0;
+    // printf("\nSearched at index %d (previously %d), and comparing T[position] (=%lf) with valeur (=%lf)", position, oldpos, T[position], valeur);
   }
-  return 0;
+  return position;
 
 }
 
@@ -247,12 +307,18 @@ int rechercher(element T[], const int taille, const element valeur)
 int ajouter(element T[], int *taille, element valeur, int taillemax)
 {
 
+  int tailleTemp, position = 1;
   if (*taille == MAXCOMP)
     return 1;
   else
   {
     *taille = *taille + 1;
-    T[*taille] = valeur;
+    while (T[position] < valeur && position < *taille) position++;
+    for (tailleTemp = *taille; tailleTemp > position; tailleTemp--)
+    {
+      T[tailleTemp] = T[tailleTemp-1];
+    }
+    T[position] = valeur;
     return 0;
   }
 }
@@ -298,3 +364,36 @@ element supprimer(element T[], int *taille, const int pos)
   return 0.0;
 }
 
+/************************************/
+/* Fonction : sort                  */
+/* Description : Tri de tableau     */
+/* Entrees : Tableau T, int dernier */
+/* Sorties : Tableau T              */
+/* Retourne : Tableau trié          */
+/************************************/
+void sort(element T[], int dernier)
+{
+
+  int i, j, minimum;
+  double swap;
+  for (i = 1; i < dernier; i++)
+  {
+
+    // scan array for minimum
+    minimum = i;
+    for (j = i + 1; j < dernier + 1; j++)
+    {
+      if (T[j] < T[minimum]) { minimum = j; }
+    }
+
+    // swap a new minimum if found
+    if (minimum != i)
+    {
+      swap = T[minimum];
+      T[minimum] = T[i];
+      T[i] = swap;
+    }
+
+  }
+
+}
