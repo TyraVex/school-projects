@@ -27,7 +27,7 @@ Tnote maxnotes(Tnote T[], const Tindice der);
 Tnote moyennenotes(Tnote T[], const Tindice der, const Tnote borneinf, const Tnote bornesup);
 float ecarttypenotes(Tnote T[],const Tindice der, const Tnote moyenne);
 Tindice lastnote=0;
-float inf, sup, moyenne;
+float inf, sup, moyenne, ecarttype;
 
 int main()
 {
@@ -104,12 +104,14 @@ case 5 : //Afficher la moyenne des notes comprises dans un interval
 
 case 6 : //Afficher l'ecart type des notes
 
-		//A completer
+    moyenne = moyennenotes(Tab, lastnote, 0, 20);
+    ecarttype = ecarttypenotes(Tab, lastnote, moyenne);
+    printf("\nEcart-type : %f\n", ecarttype);
 		break;
 
 case 99 : //Quitter
 
-		//A completer
+    return 1;
 		break;
 
 default : printf("\nARRET DE L'APPLICATION !!! \n\n");
@@ -241,7 +243,7 @@ Tnote maxnotes(Tnote T[], const Tindice der)
 Tnote moyennenotes(Tnote T[], const Tindice der, const Tnote borneinf, const Tnote bornesup)
 {
 
-  if (bornesup > der || borneinf > der || bornesup < 0 || borneinf < 0 || borneinf > bornesup) return 0;
+  if (bornesup > NOTEMAX || borneinf > NOTEMAX || bornesup < NOTEMIN || borneinf < NOTEMIN || borneinf > bornesup) return 0;
   int indice, count = 0;
   float moyenne = 0;
   for (indice = 0; indice < der; indice++)
@@ -267,7 +269,16 @@ Tnote moyennenotes(Tnote T[], const Tindice der, const Tnote borneinf, const Tno
 /**************************************************************************************************/
 float ecarttypenotes(Tnote T[], const Tindice der, const Tnote moyenne)
 {
-		//A completer
 
-return 0;	
+  int position;
+  float ecarttype = 0;
+  for (position = 0; position < der+1; position++)
+  {
+    ecarttype += (T[position] - moyenne) * (T[position] - moyenne);
+    printf("ecarttype %f, to add %f = (%f - %f)^2\n", ecarttype, (T[position] - moyenne) * (T[position] - moyenne), T[position], moyenne);
+  }
+  printf("sqrt(%f / %d)\n", ecarttype, (der+1));
+  ecarttype = sqrt(ecarttype / (der+1));
+  return ecarttype;
+
 }
