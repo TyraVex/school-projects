@@ -31,8 +31,8 @@ int main()
  long duree;
  struct timeval debut, fin ;
  int choix; //Saisie reponse user pour le choix de la methode de generation du tableau
- int i; //compteur de boucle
-
+ int i; // pour test des perfs
+ double tempsTot = 0; // pour test des perfs
 do
 {
 
@@ -165,6 +165,35 @@ do
                  printf("\nT1[%d]=%lf\n", position, T1[position]);
 
                  break;
+
+        case 8 : printf("\nTEST DES PERFORMANCES DE LA FONCTION AJOUT !!!\n");
+                 printf("\n┌────────┬─────────┐");
+                 printf("\n│ Taille │  Temps  │");
+                 printf("\n├────────┼─────────┤\n");
+
+                 for (dernier = 4999; dernier <= 10000; dernier += 99)
+                 {
+
+                   genealea(T1,dernier);
+
+                   gettimeofday(&debut,NULL); //Date de debut de l'ajout
+                   ajouter(T1, &dernier, val, MAXCOMP);
+                   gettimeofday(&fin,NULL); //Date de la fin de l'ajout
+                   duree=(double)(fin.tv_sec*1000000+fin.tv_usec)-(debut.tv_sec*1000000+debut.tv_usec);
+                   tempsTot += duree;
+                   printf("│%7d │%7ld │\n", dernier, duree);
+                   dernier--;
+
+
+                 }
+
+                 printf("├────────┼────────┤\n");
+                 printf("│ TOTAL: │%7.0lf │\n", tempsTot);
+                 printf("└────────┴────────┘\n");
+
+                 tempsTot = 0;
+                 break;
+
         case 9 : printf("\nFin de l'application !!!\n");
                  break;
         default : printf("Cette saisie n'est pas correcte !!! !!! \n");
@@ -189,8 +218,53 @@ while (choix!=9);
 void lister (const element T[], const int taille)
 {
 
-   printf("\n");
-   for (int position=1; position < taille+1 && position < MAXAFF; position++) printf("T1[%d]=%lf\n", position, T[position]);
+  int position, perLine = 0;
+  printf("\n");
+
+  // if array is small
+  if (taille <= 20)
+  {
+    for (int position=1; position < taille+1; position++) printf("T1[%d]=%lf\n", position, T[position]);
+  }
+
+  // if array is regular
+  else if (taille > 20 && taille <= 100)
+  {
+    printf("[");
+    for (position=1; position < taille; position++)
+    {
+      perLine++;
+      if (perLine > MAXL)
+      {
+        perLine=1;
+        printf("\n");
+      }
+      printf("%lf, ", T[position]);
+    }
+    if (perLine + 1 > MAXL) printf("\n");
+    printf("%lf]\n", T[taille]);
+  }
+
+  // if array is large
+  else if (taille > 100)
+  {
+    printf("[%lf", T[1]);
+    for (position=2; position < 4; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf(", ...");
+    for (position = taille / 2 - 1; position < taille / 2 + 2; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf(", ...");
+    for (position = taille - 2; position < taille + 1; position++)
+    {
+      printf(", %lf", T[position]);
+    }
+    printf("]\n");
+  }
 
 }
 
