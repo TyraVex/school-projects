@@ -8,52 +8,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXPERS 100
-#define MAXCAR 100
+#define MAXCAR 30
+#define MAXPERS 10000
 
-// Insertion d'un nom
-int insererpers(char *Rep, int *der, char *nom) {
-    int i = 0, j;
-    while (i < *der && strcmp(Rep[i], nom) < 0) i++;
-    if (i < *der && strcmp(Rep[i], nom) == 0) return i;
-    for (j = *der; j > i; j--) Rep[j] = Rep[j-1];
-    strcpy(Rep[i], nom);
-    (*der)++;
-    return i;
-}
+typedef char Tchaine[MAXCAR+1];
+typedef Tchaine Ttabpers[MAXPERS+1];
+void afficherrep(Ttabpers Rep, int der);
+int insererpers(Ttabpers Rep, int *der, Tchaine nom);
+int chercherpers(Ttabpers Rep, int der, Tchaine nom);
+int supprimerpers(Ttabpers Rep, int *der, int position);
 
-// Affichage de l'annuaire
-void afficherrep(char Rep, int der) {
-    int i;
-    printf("\nAnnuaire :\n");
-    for (i = 1; i <= der; i++) {
-        printf("%s\n", Rep[i]);
-    }
-}
-
-// Recherche d'un nom
-int chercherpers(char Rep, int der, char *nom) {
-    int deb, fin, milieu;
-    deb = 1;
-    fin = der;
-    while (deb <= fin) {
-        milieu = (deb + fin) / 2;
-        if (strcmp(Rep[milieu], nom) == 0) return milieu;
-        else if (strcmp(Rep[milieu], nom) < 0) deb = milieu + 1;
-        else fin = milieu - 1;
-    }
-    return 0;
-}
-
-// Supression d'une position
-int supprimerpers(char Rep, int *der, int position) {
-    int i;
-    if (position > *der || position < 1) return 0;
-    for (i = position; i < *der; i++)
-        Rep[i] = Rep[i + 1];
-    (*der)--;
-    return position;
-}
 
 /***************************************************************************/
 /* NOM FONCTION : menu						           */
@@ -67,32 +31,47 @@ int menu();
 
 int main() {
 
-  char Repert[MAXPERS][MAXCAR]; // Repertoire de personne
-  char nom[MAXCAR]; //Variable pour saisir le nom de la personne
-  char rep=menu(); // Réponse du menu
-  int dernier; //Position du dernier entre. Mais le 0 c'est pour la sentinnelle
+  Ttabpers Rep; // Repertoire de personne
+  Tchaine nom; //Variable pour saisir le nom de la personne
+  char rep; // Réponse du menu
+  int dernier = 1; //Position du dernier entre. Mais le 0 c'est pour la sentinnelle
   int trouv; // drapeau utilise pour savoir si l'insertion a ete faite
-  int monchoix; // Variable pour saisir les reponses de l'utilisateur pour traiter les options du menu 
+  int monchoix; // Variable pour saisir les reponses de l'utilisateur pour traiter les options du menu
+  int pos; // Pour la position
 
   //Traitement de la reponse de la l'utilisateur
-  switch (rep)
+  while (1) //On arrete quand l'utilisateur choisi l'option 4
   {
-      case 1 : printf("\nSaisir un nom : ");
-               scanf("%s", &nom);
-               printf("\nNom saisi : '%s'", nom);
-               if (!chercherpers(nom, *Repert, dernier))
-                  insererpers(nom, *Repert, dernier);
-               if (!trouv) printf("\nLe repertoire est plein !!!\n\n");
-               break;
-      case 2 : printf("\nSaisir un nom :");
-               scanf("%s", &nom);
-               printf("\nLa position est %d !!!", chercherpers(nom, Repert, dernier));
-               break;
-      case 3 : afficherrep(Repert, dernier);
-               break;
-      case 4 : printf("\nFIN !!!\n\n");
-               exit(0);
-      default : printf("\nCas imprevu !!!\n\n");
+      rep=menu();
+      switch (rep)
+      {
+          case 1 : printf("Saisir un nom : ");
+                   scanf("%s", &nom);
+                   printf("Nom saisi : '%s'\n", nom);
+                   if (!chercherpers(Rep, dernier, nom)) trouv=insererpers(Rep, &dernier, nom);
+                   if (!trouv) printf("\nLe repertoire est plein !!!\n");
+                   continue;
+
+          case 2 : printf("Saisir un nom : ");
+                   scanf("%s", nom);
+                   printf("La position est %d !!!\n", chercherpers(Rep, dernier, nom));
+                   continue;
+
+          case 3 : printf("Saisir une position à supprimer : ");
+                   scanf("%d", &pos);
+                   supprimerpers(Rep, &dernier, pos);
+                   continue;
+
+          case 4 : printf("\nContenu de l'annuaire :\n");
+                   afficherrep(Rep, dernier);
+                   continue;
+
+          case 5 : printf("FIN !!!\n\n");
+                   return 1;
+
+          default : printf("Cas imprevu !!!\n");
+                    continue;
+      }
   }
 
 }
@@ -108,14 +87,59 @@ int main() {
 int menu() {
 
    int choix; //Permet de saisir la reponse de l'utilisateur
-
    printf("\n1 - Entrer un nom de client");
    printf("\n2 - Rechercher la position d'un client");
-   printf("\n3 - Afficher l'annuaire ");
-   printf("\n4 - Quitter");
-   printf("\nVotre choix : ");
+   printf("\n3 - Supprimer un client par position");
+   printf("\n4 - Afficher l'annuaire ");
+   printf("\n5 - Quitter");
+   printf("\n\nVotre choix : ");
    scanf("%d", &choix);
    getchar();
    return choix;
 
 }
+
+// Insertion d'un nom
+int insererpers(Ttabpers Rep, int *der, Tchaine nom) {
+    if (*der >= MAXPERS) return 0; // the list is full
+
+    int i = *der;
+    while (i > 0 && strcmp(Rep[i-1], nom) > 0) {
+        strcpy(Rep[i], Rep[i-1]);
+        i--;
+    }
+
+    strcpy(Rep[i], nom);
+    (*der)++;
+    return i+1;
+}
+
+// Affichage de l'annuaire
+void afficherrep(Ttabpers Rep, int der) {
+    for (int i = 1; i < der; i++) {
+        printf("%d. %s\n", i, Rep[i]);
+    }
+}
+
+// Recherche d'un nom
+int chercherpers(Ttabpers Rep, int der, Tchaine nom) {
+    int debut = 1; //premier element de la liste
+    int fin = der-1; // dernier element de la liste
+    while (debut <= fin) {
+        int milieu = (debut + fin) / 2;
+        int comp = strcmp(Rep[milieu], nom);
+        if (comp == 0) return milieu;
+        else if (comp < 0) debut = milieu + 1;
+        else fin = milieu - 1;
+    }
+    return 0;
+}
+
+// Supprimer un nom
+int supprimerpers(Ttabpers Rep, int *der, int position) {
+    if (position > *der || position < 1) return 0; // position non valide
+    for (int i = position; i < *der; i++) strcpy(Rep[i], Rep[i+1]);
+    (*der)--;
+    return position;
+}
+
