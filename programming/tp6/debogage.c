@@ -44,7 +44,7 @@ int main() {
       switch (rep)
       {
           case 1 : printf("Saisir un nom : ");
-                   scanf("%s", &nom);
+                   scanf("%s", nom);
                    printf("Nom saisi : '%s'\n", nom);
                    if (!chercherpers(Rep, dernier, nom)) trouv=insererpers(Rep, &dernier, nom);
                    if (!trouv) printf("\nLe repertoire est plein !!!\n");
@@ -72,12 +72,12 @@ int main() {
                        if (!chercherpers(Rep, dernier, randoms[i]))
                           insererpers(Rep, &dernier, randoms[i]);
                    }
-                   printf("\nFait en %d µs\n", getTime() - chrono);
+                   printf("\nFait en %lu µs\n", getTime() - chrono);
 
                    printf("\nRecherche de %d éléments", MAXPERS);
                    chrono = getTime();
                    for (int i=1; i < MAXPERS; i++) chercherpers(Rep, dernier, randoms[i]);
-                   printf("\nFait en %d µs\n", getTime() - chrono);
+                   printf("\nFait en %lu µs\n", getTime() - chrono);
 
                    printf("\nSuppression de %d éléments", MAXPERS);
                    chrono = getTime();
@@ -85,7 +85,7 @@ int main() {
                        pos = chercherpers(Rep, dernier, randoms[i]);
                        supprimerpers(Rep, &dernier, pos);
                    }
-                   printf("\nFait en %d µs\n", getTime() - chrono);
+                   printf("\nFait en %lu µs\n", getTime() - chrono);
                    continue;
 
           case 6 : printf("FIN !!!\n\n");
